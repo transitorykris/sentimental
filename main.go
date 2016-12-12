@@ -18,10 +18,11 @@ type specification struct {
 
 // Event contains information from an interesting tweet
 type Event struct {
-	Timestamp string   `json:"timestamp"` // Timestamp of tweet
-	TweetID   int64    `json:"tweetID"`   // ID of tweet
-	Raw       string   // Raw text of the tweet
-	Keywords  []string // Any keywords that were found
+	Timestamp string       `json:"timestamp"` // Timestamp of tweet
+	TweetID   int64        `json:"tweetID"`   // ID of tweet
+	Raw       string       // Raw text of the tweet
+	Keywords  []string     // Any keywords that were found
+	Analysis  hc.FullScore // The score as calculated by the HumorChecker package
 }
 
 func main() {
@@ -52,7 +53,8 @@ func main() {
 			log.Println(err)
 			continue
 		}
-		msg, err := json.Marshal(hc.Analyze(event.Message))
+		e.Analysis = hc.Analyze(event.Message)
+		msg, err := json.Marshal(e)
 		if err != nil {
 			log.Println(err)
 			continue
